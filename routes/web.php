@@ -32,5 +32,30 @@ Route::middleware('auth')->group(function () {
     
 });
 
+Route::middleware(['auth', 'role:admin'])->group(function () {
+
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    Route::resource('categories', CategoryController::class);
+    Route::resource('products', ProductController::class);
+
+});
+
+
+// ================= CASHIER =================
+Route::middleware(['auth', 'role:cashier'])->group(function () {
+
+    // Kasir
+    Route::get('/kasir', [TransactionController::class, 'index'])->name('kasir.index');
+
+    // Checkout
+    Route::post('/kasir/checkout', [TransactionController::class, 'store'])->name('kasir.checkout');
+
+    // Struk
+    Route::get('/transactions/{id}', [TransactionController::class, 'show'])->name('transactions.show');
+
+});
 
 require __DIR__.'/auth.php';
